@@ -163,7 +163,7 @@ CREATE TABLE `educations` (
   `degree_id` int unsigned NOT NULL,
   `start_date` datetime DEFAULT NULL,
   `end_date` datetime DEFAULT NULL,
-  `grade` decimal(2,2) DEFAULT NULL,
+  `grade` decimal(4,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `person_id` (`person_id`),
   KEY `university_id` (`university_id`),
@@ -358,7 +358,7 @@ DROP TABLE IF EXISTS `journals`;
 CREATE TABLE `journals` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `poblisher_name` varchar(255) DEFAULT NULL,
+  `publisher_name` varchar(255) DEFAULT NULL,
   `is_international` tinyint(1) NOT NULL DEFAULT (false),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -371,7 +371,7 @@ CREATE TABLE `journals` (
 DROP TABLE IF EXISTS `research_activities`;
 CREATE TABLE `research_activities` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `institute_id` int unsigned NOT NULL,
+  `institute_id` int unsigned,
   `type_id` int unsigned NOT NULL,
   `content_id` int unsigned NOT NULL,
   `officer_researcher_id` int unsigned NOT NULL,
