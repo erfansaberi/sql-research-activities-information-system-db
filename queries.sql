@@ -193,3 +193,95 @@ FROM research_activity_salary_payments
 WHERE researcher_id = @test_researcher_id
 GROUP BY YEAR(paid_at) WITH ROLLUP;
 
+-- ======================
+-- Research Teams Reports
+-- ======================
+SET @test_researcher_id = 1;
+
+-- First Query:
+-- Researchers that have mututal research activity with a specific researcher and their activity information
+SELECT DISTINCT
+	c.person_id,
+    CONCAT(p.first_name, ' ', p.last_name) AS researcher_name,
+	c.research_activity_id,
+	rat.title AS type,
+	ra.content_id,
+    i.name AS institute
+FROM contracts c
+INNER JOIN research_activities ra
+	ON c.research_activity_id = ra.id
+INNER JOIN research_activity_types rat
+	ON ra.type_id = rat.id
+INNER JOIN institutes i
+	ON ra.institute_id = i.id
+INNER JOIN persons p
+	ON c.person_id = p.id
+WHERE c.research_activity_id IN (
+	SELECT research_activity_id
+	FROM contracts
+	WHERE person_id = @test_researcher_id
+) AND person_id != @test_researcher_id;
+
+-- Second Query:
+-- Researchers that have related research activity with a specific researcher
+-- and their activity information
+SELECT DISTINCT
+	c.person_id,
+    CONCAT(p.first_name, ' ', p.last_name) AS researcher_name,
+	rarea.title AS research_area,
+	rat.title AS type,
+	ra.content_id AS content_id
+FROM contracts c
+INNER JOIN research_activity_areas raa
+	ON c.research_activity_id = raa.research_activity_id
+INNER JOIN research_activities ra
+	ON c.research_activity_id = ra.id
+INNER JOIN research_activity_types rat
+	ON ra.type_id = rat.id
+INNER JOIN research_areas rarea
+	ON raa.research_area_id = rarea.id
+INNER JOIN institutes i
+	ON ra.institute_id = i.id
+INNER JOIN persons p
+	ON c.person_id = p.id
+WHERE raa.research_area_id IN (
+	SELECT DISTINCT
+		raa.research_area_id
+	FROM contracts c
+	INNER JOIN research_activity_areas raa
+		ON raa.research_activity_id = c.research_activity_id
+	WHERE person_id = @test_researcher_id
+) AND person_id != @test_researcher_id;
+
+-- Researchers that have related research activity with a specific researcher
+-- and their activity information, grouped
+SELECT DISTINCT
+	c.person_id,
+    CONCAT(p.first_name, ' ', p.last_name) AS researcher_name,
+	GROUP_CONCAT(rarea.title) AS research_areas,
+	GROUP_CONCAT(c.research_activity_id) AS research_activity_ids,
+	rat.title AS type,
+	GROUP_CONCAT(ra.content_id) AS content_ids
+FROM contracts c
+INNER JOIN research_activity_areas raa
+	ON c.research_activity_id = raa.research_activity_id
+INNER JOIN research_activities ra
+	ON c.research_activity_id = ra.id
+INNER JOIN research_activity_types rat
+	ON ra.type_id = rat.id
+INNER JOIN research_areas rarea
+	ON raa.research_area_id = rarea.id
+INNER JOIN institutes i
+	ON ra.institute_id = i.id
+INNER JOIN persons p
+	ON c.person_id = p.id
+WHERE raa.research_area_id IN (
+	SELECT DISTINCT
+		raa.research_area_id
+	FROM contracts c
+	INNER JOIN research_activity_areas raa
+		ON raa.research_activity_id = c.research_activity_id
+	WHERE person_id = @test_researcher_id
+) AND person_id != @test_researcher_id
+GROUP BY c.person_id, researcher_name, type;
+
