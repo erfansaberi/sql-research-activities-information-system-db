@@ -285,3 +285,34 @@ WHERE raa.research_area_id IN (
 ) AND person_id != @test_researcher_id
 GROUP BY c.person_id, researcher_name, type;
 
+-- ===========================
+-- Research Activities Reports
+-- ===========================
+SET @test_research_activity_id=1675;
+SET @test_start_period='2019-01-01';
+SET @test_end_period='2022-01-01';
+
+-- First Query:
+-- Information of researchers who've been working in a specific period of date
+SELECT DISTINCT p.*
+FROM persons p
+INNER JOIN contracts c
+	ON c.person_id = p.id
+WHERE (
+	c.start_date BETWEEN @test_start_period AND @test_end_period
+    OR c.end_date BETWEEN @test_start_period AND @test_end_period
+    OR @test_start_period BETWEEN c.start_date AND c.end_date
+);
+
+-- Second Query:
+-- Total financial records and financial records grouped by researcher
+SELECT 
+	COALESCE(rasp.researcher_id, 'Total') as researcher_id,
+    CONCAT(p.first_name, ' ', p.last_name) AS researcher,
+	SUM(rasp.amount) AS total_salary_paid
+FROM research_activity_salary_payments rasp
+INNER JOIN persons p
+	ON rasp.researcher_id = p.id
+WHERE rasp.research_activity_id = @test_research_activity_id
+GROUP BY researcher_id, researcher WITH ROLLUP
+HAVING GROUPING(researcher)=0 OR researcher_id IS NULL;
