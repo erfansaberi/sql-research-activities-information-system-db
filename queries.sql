@@ -3,9 +3,9 @@
 -- =========================
 
 
--- ====================
--- Institutes Reporting
--- ====================
+-- ==================
+-- Institutes Reports
+-- ==================
 SET @test_institute_id = 16;
 
 -- First Query:
@@ -129,4 +129,67 @@ INNER JOIN research_activity_types rat
 INNER JOIN persons p
 	ON ra.officer_researcher_id = p.id
 WHERE institute_id = @test_institute_id;
+
+-- ===================
+-- Researchers Reports
+-- ===================
+SET @test_researcher_id = 1;
+SET @test_start_period = '2013-01-01';
+SET @test_end_period = '2023-06-06';
+
+-- First Query:
+-- Information of all researchers
+SELECT DISTINCT p.*
+FROM persons p
+INNER JOIN contracts c
+	ON p.id = c.person_id;
+
+-- Second Query:
+-- History of a researcher's research activities in a given period
+SELECT
+	ra.id,
+    i.name AS institute,
+    rat.title AS type,
+    ra.content_id,
+    ra.is_international,
+    c.role,
+    c.duties,
+    c.salary,
+    c.start_date,
+    c.end_date
+FROM research_activities ra
+INNER JOIN contracts c
+	ON ra.id = c.research_activity_id
+INNER JOIN research_activity_types rat
+	ON ra.type_id = rat.id
+INNER JOIN institutes i
+	ON ra.institute_id = i.id
+WHERE c.person_id = @test_researcher_id AND (
+	c.start_date BETWEEN @test_start_period AND @test_end_period
+    OR c.end_date BETWEEN @test_start_period AND @test_end_period
+    OR @test_start_period BETWEEN c.start_date AND c.end_date
+);
+
+-- Second Query:
+-- Salary payment records of researcher
+SELECT *
+FROM research_activity_salary_payments
+WHERE researcher_id = @test_researcher_id;
+
+-- Sum of paid salaries in a given period
+SELECT
+	count(*) AS number_of_payments,
+	sum(amount) AS total_amount
+FROM research_activity_salary_payments
+WHERE researcher_id = @test_researcher_id
+	  AND paid_at BETWEEN @test_start_period AND @test_end_period;
+
+-- Sum of paid salaries grouped by date
+SELECT
+	YEAR(paid_at),
+	count(*) AS number_of_payments,
+	sum(amount) AS total_amount
+FROM research_activity_salary_payments
+WHERE researcher_id = @test_researcher_id
+GROUP BY YEAR(paid_at) WITH ROLLUP;
 
