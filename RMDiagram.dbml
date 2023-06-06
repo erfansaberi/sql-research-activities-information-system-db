@@ -1,0 +1,240 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+
+Table persons {
+  id integer [PK]
+  ssn varchar
+  first_name varchar
+  last_name varchar
+  birth_date datetime 
+  email email
+  phone_number varchar
+}
+
+Table educations {
+  id integer [PK]
+  person_id integer [ref: > persons.id] // 1->n
+  university_id integer [ref: > universities.id]
+  field_of_study_id integer [ref: > fields_of_study.id]
+  degree_id integer [ref: > study_degrees.id]
+  start_date datetime
+  end_date datetime
+  grade decimal
+}
+
+Table universities {
+  id integer [PK]
+  name varchar
+}
+
+Table fields_of_study {
+  id integer [PK]
+  title varchar
+}
+
+Table study_degrees {
+  id integer [PK]
+  title varchar
+
+
+}
+
+Table institutes {
+  id integer [PK]
+  name varchar
+  type_id integer [ref: > institute_types.id]
+  current_budget biginteger
+  
+
+}
+
+Table institute_types {
+  id integer [PK]
+  title varchar
+}
+
+Table buildings {
+  id integer [PK]
+  name varchar
+  city varchar
+  address varchar
+  institute_id integer [ref: > institutes.id]
+}
+
+Table journals {
+  id integer [PK]
+  name varchar
+  poblisher_name varchar
+  is_international boolean
+}
+
+Table journal_employment {
+  id integer [PK]
+  journal_id integer [ref: > journals.id]
+  person_id integer [ref: > persons.id]
+  committee_id integer [ref: > journal_committees.id]
+  role varchar
+}
+
+Table journal_committees {
+  id integer [PK]
+  title varchar
+}
+
+// Table journal_financial_supports {
+//   id integer [PK]
+//   journal_id integer [ref: > journals.id]
+//   institute_id integer [ref: > institutes.id]
+//   type_id integer [ref: > financial_support_types.id]
+//   amount biginteger
+//   paid_at datetime
+// }
+
+Table financial_support_types {
+  id integer [PK]
+  title varchar
+}
+
+Table journal_papers {
+  id integer [PK]
+  journal_id integer [ref: > journals.id]
+  name varchar
+  pages_number integer
+  admission_date date
+  submission_date date
+}
+
+Table conference_papers {
+  id integer [PK]
+  conference_id integer [ref: > conferences.id]
+  name varchar
+  pages_number integer
+  admission_date date
+  submission_date date
+}
+
+Table conferences {
+  id integer [PK]
+  name varchar
+  location varchar 
+  start_date date
+  end_date date
+}
+
+Table institute_registrations {
+  person_id integer [PK, ref: > persons.id]
+  institute_id integer [PK, ref: > institutes.id]
+  start_date date
+  end_date date
+}
+
+Table institute_employments {
+  person_id integer [PK, ref: > persons.id]
+  institute_id integer [PK, ref: > institutes.id]
+  start_date date
+  end_date date
+  is_administration boolean
+  role varchar
+}
+
+Table institute_work_areas {
+  institute_id integer [PK, ref: > institutes.id]
+  area_id integer [PK, ref: > research_areas.id]
+}
+
+Table conference_cooperations {
+  id integer [PK]
+  conference_id integer [ref: > conferences.id]
+  person_id integer [ref: > persons.id]
+  committee_id integer [ref: > conference_committees.id] 
+  role varchar
+}
+
+Table conference_committees {
+  id integer [PK]
+  title varchar
+}
+
+Table workshops {
+  id integer [PK]
+  conference_id integer [ref: > conferences.id]
+  title varchar
+  start_date_time datetime
+  location varchar 
+}
+
+Table research_activities {
+  id integer [PK]
+  institute_id integer [ref: > institutes.id]
+  type_id integer [ref: > research_activity_types.id ]
+  content_id integer // insert from another tables .
+  officer_researcher_id integer [ref: > persons.id]
+  office_building_id integer [ref: > buildings.id]
+  is_international boolean
+  start_date datetime
+  end_date datetime
+}
+
+Table research_activity_areas {
+  id integer [PK]
+  research_activity_id integer [ref: > research_activities.id]
+  research_area_id integer [ref: > research_areas.id]
+}
+
+Table research_activity_types {
+  id integer [PK]
+  title varchar
+}
+
+Table research_activity_financial_supports {
+  id integer [PK]
+  institute_id integer [ref: > institutes.id]
+  research_activity_id integer [ref: > research_activities.id]
+  type_id integer [ref: > financial_support_types.id]
+  amount double
+  paid_at datetime
+}
+
+Table research_areas {
+  id integer [PK]
+  title varchar
+}
+
+Table equipments {
+  id integer [PK]
+  name varchar
+}
+
+Table equipment_assignments {
+  research_activity_id integer [PK, ref: > research_activities.id]
+  person_id integer [PK, ref: > persons.id]
+  equipment_id integer [PK, ref: > equipments.id]
+  assigned_at datetime
+}
+
+Table research_activity_salary_payments {
+  id integer [PK]
+  research_activity_id integer [ref: > research_activities.id]
+  researcher_id integer [ref: > persons.id]
+  amount double
+  paid_at datetime
+}
+
+Table favorite_research_areas {
+  id integer [PK]
+  person_id integer [ref: > persons.id]
+  area_id integer [ref: > research_areas.id]
+}
+
+Table contracts {
+  id integer [PK]
+  research_activity_id integer [ref: > research_activities.id]
+  person_id integer [ref: > persons.id]
+  role varchar
+  duties text
+  salary double
+  start_date date
+  end_date date
+}
