@@ -11,12 +11,14 @@ We used draw.io to draw the entity relationship diagram, dbdiagrams.io to design
 
 [Mock Data](db-data.sql)
 
----
-## ER Diagram
-![ER Diagram](ER-Diagram.svg)
+[MySQL Workbench Model](db-model.mwb)
 
 ---
-##  Diagram
+## RM Diagram
 ![RM Diagram](RMDiagram.png)
 
 [PDF Version](RMDiagram.pdf)
+
+---
+## ER Diagram
+![ER Diagram](ER-Diagram.svg)
