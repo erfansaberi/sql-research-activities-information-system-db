@@ -12,6 +12,10 @@ We used draw.io to draw the entity relationship diagram, dbdiagrams.io to design
 [Mock Data](db-data.sql)
 
 ---
+## EM Diagram
+![RM Diagram](RMDiagram.png)
+
+---
 ## RM Diagram
 ![RM Diagram](RMDiagram.png)
 
