@@ -21,4 +21,4 @@ We used draw.io to draw the entity relationship diagram, dbdiagrams.io to design
 
 ---
 ## ER Diagram
-![ER Diagram](ERDiagram.png)
+![ER Diagram](ERDiagramLowQuality.png)
